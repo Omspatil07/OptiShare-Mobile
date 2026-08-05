@@ -10,7 +10,7 @@ import type { ViewStyle } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { UI_CONSTANTS } from '../../constants';
-import type { SpacingToken} from '../../theme';
+import type { SpacingToken } from '../../theme';
 import { useTheme } from '../../theme';
 
 export interface DividerProps {

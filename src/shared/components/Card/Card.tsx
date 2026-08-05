@@ -7,15 +7,11 @@
 
 import React from 'react';
 
-import type {
-  ViewStyle} from 'react-native';
-import {
-  Pressable,
-  View
-} from 'react-native';
+import type { ViewStyle } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { UI_CONSTANTS } from '../../constants';
-import type { SpacingToken} from '../../theme';
+import type { SpacingToken } from '../../theme';
 import { useTheme } from '../../theme';
 
 export type CardVariant = 'elevated' | 'outlined' | 'filled' | 'glass';

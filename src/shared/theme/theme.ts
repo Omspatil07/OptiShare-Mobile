@@ -3,7 +3,7 @@
  */
 
 import { borderRadius } from './borderRadius';
-import type { ColorPalette} from './colors';
+import type { ColorPalette } from './colors';
 import { darkColors, lightColors } from './colors';
 import { responsive } from './responsive';
 import { shadows } from './shadows';

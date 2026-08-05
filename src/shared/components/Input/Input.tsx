@@ -7,15 +7,8 @@
 
 import React, { useState } from 'react';
 
-import type {
-  TextInputProps as RNTextInputProps,
-  ViewStyle} from 'react-native';
-import {
-  Pressable,
-  StyleSheet,
-  TextInput as RNTextInput,
-  View
-} from 'react-native';
+import type { TextInputProps as RNTextInputProps, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, TextInput as RNTextInput, View } from 'react-native';
 
 import { UI_CONSTANTS } from '../../constants';
 import { useTheme } from '../../theme';
@@ -98,7 +91,10 @@ export function Input({
           {
             backgroundColor: theme.colors.surface,
             borderColor: getBorderColor(),
-            borderWidth: isFocused || error ? UI_CONSTANTS.BORDER_THICKNESS_THICK : UI_CONSTANTS.BORDER_THICKNESS,
+            borderWidth:
+              isFocused || error
+                ? UI_CONSTANTS.BORDER_THICKNESS_THICK
+                : UI_CONSTANTS.BORDER_THICKNESS,
             borderRadius: theme.borderRadius.md,
           },
         ]}

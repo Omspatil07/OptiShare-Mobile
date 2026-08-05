@@ -7,19 +7,12 @@
 
 import React from 'react';
 
-import type {
-  StatusBarStyle,
-  ViewStyle} from 'react-native';
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  View
-} from 'react-native';
+import type { StatusBarStyle, ViewStyle } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import type { SpacingToken} from '../../theme';
+import type { SpacingToken } from '../../theme';
 import { useTheme } from '../../theme';
 
 export interface ScreenContainerProps {
@@ -49,20 +42,14 @@ export function ScreenContainer({
 
   const content = scrollable ? (
     <ScrollView
-      contentContainerStyle={[
-        styles.scrollContent,
-        { padding: paddingSize },
-        style,
-      ]}
+      contentContainerStyle={[styles.scrollContent, { padding: paddingSize }, style]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
       {children}
     </ScrollView>
   ) : (
-    <View style={[styles.fixedContent, { padding: paddingSize }, style]}>
-      {children}
-    </View>
+    <View style={[styles.fixedContent, { padding: paddingSize }, style]}>{children}</View>
   );
 
   return (

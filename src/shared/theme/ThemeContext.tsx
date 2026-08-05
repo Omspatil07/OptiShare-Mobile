@@ -8,7 +8,7 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 
 import { useColorScheme as useRNColorScheme } from 'react-native';
 
-import type { Theme, ThemeMode} from './theme';
+import type { Theme, ThemeMode } from './theme';
 import { darkTheme, lightTheme } from './theme';
 
 export interface ThemeContextValue {
@@ -56,7 +56,7 @@ export function ThemeProvider({
       setThemeMode,
       toggleTheme,
     }),
-    [theme, themeMode, isDarkMode, toggleTheme]
+    [theme, themeMode, isDarkMode, toggleTheme],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

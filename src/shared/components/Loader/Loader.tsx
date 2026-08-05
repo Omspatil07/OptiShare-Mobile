@@ -7,13 +7,8 @@
 
 import React from 'react';
 
-import type {
-  ViewStyle} from 'react-native';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View
-} from 'react-native';
+import type { ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useTheme } from '../../theme';
 import { Text } from '../Text/Text';

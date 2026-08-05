@@ -7,14 +7,8 @@
 
 import React from 'react';
 
-import type {
-  PressableProps,
-  ViewStyle} from 'react-native';
-import {
-  Pressable,
-  StyleSheet,
-  View
-} from 'react-native';
+import type { PressableProps, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { UI_CONSTANTS } from '../../constants';
 import { useTheme } from '../../theme';
@@ -60,31 +54,21 @@ export function Button({
 
     switch (variant) {
       case 'primary':
-        backgroundColor = pressed
-          ? theme.colors.primaryDark
-          : theme.colors.primary;
+        backgroundColor = pressed ? theme.colors.primaryDark : theme.colors.primary;
         break;
       case 'secondary':
-        backgroundColor = pressed
-          ? theme.colors.secondaryDark
-          : theme.colors.secondary;
+        backgroundColor = pressed ? theme.colors.secondaryDark : theme.colors.secondary;
         break;
       case 'outline':
-        backgroundColor = pressed
-          ? theme.colors.backgroundSecondary
-          : 'transparent';
+        backgroundColor = pressed ? theme.colors.backgroundSecondary : 'transparent';
         borderColor = theme.colors.borderFocus;
         borderWidth = UI_CONSTANTS.BORDER_THICKNESS;
         break;
       case 'ghost':
-        backgroundColor = pressed
-          ? theme.colors.backgroundSecondary
-          : 'transparent';
+        backgroundColor = pressed ? theme.colors.backgroundSecondary : 'transparent';
         break;
       case 'danger':
-        backgroundColor = pressed
-          ? theme.colors.error
-          : theme.colors.error;
+        backgroundColor = pressed ? theme.colors.error : theme.colors.error;
         break;
     }
 
@@ -93,8 +77,7 @@ export function Button({
         variant === 'outline' || variant === 'ghost'
           ? 'transparent'
           : theme.colors.backgroundTertiary;
-      borderColor =
-        variant === 'outline' ? theme.colors.border : 'transparent';
+      borderColor = variant === 'outline' ? theme.colors.border : 'transparent';
     }
 
     // Size padding mapping
@@ -153,11 +136,7 @@ export function Button({
       accessibilityState={{ disabled: isDisabled, busy: loading }}
       disabled={isDisabled}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.baseContainer,
-        getContainerStyle(pressed),
-        style,
-      ]}
+      style={({ pressed }) => [styles.baseContainer, getContainerStyle(pressed), style]}
       {...props}
     >
       <View style={styles.contentRow}>

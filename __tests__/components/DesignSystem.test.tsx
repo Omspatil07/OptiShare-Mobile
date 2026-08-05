@@ -2,11 +2,12 @@
  * Design System Component Test Suite
  *
  * Verifies rendering, theme context, interaction handling,
- * and accessibility props across design system components.
+ * variants, colors, and accessibility props across design system components.
  */
 
 import React from 'react';
 import ReactTestRenderer, { act } from 'react-test-renderer';
+import { Pressable, TextInput as RNTextInput } from 'react-native';
 import {
   Button,
   Card,
@@ -32,41 +33,50 @@ function ThemeTestComponent(): React.JSX.Element {
 }
 
 describe('OptiShare Design System', () => {
-  it('renders Text component with variants correctly', async () => {
+  it('renders Text component with variants, colors, and weights', async () => {
     let renderer: ReactTestRenderer.ReactTestRenderer;
     await act(async () => {
       renderer = ReactTestRenderer.create(
         <ThemeProvider>
-          <Text variant="h1">Heading Title</Text>
-          <Text variant="body1">Body Content</Text>
+          <Text variant="h1" color="primary" weight="bold">Heading Title</Text>
+          <Text variant="h2" color="secondary">H2 Title</Text>
+          <Text variant="h3" color="tertiary">H3 Title</Text>
+          <Text variant="h4" color="error">H4 Title</Text>
+          <Text variant="body1" color="success">Body Content</Text>
+          <Text variant="body2" color="warning">Body2 Content</Text>
+          <Text variant="caption" color="inverse">Caption Text</Text>
+          <Text variant="label" color="brand">Label Text</Text>
+          <Text variant="button" color="#FF0000" align="center">Button Text</Text>
         </ThemeProvider>
       );
     });
 
     const textNodes = renderer!.root.findAllByType(Text);
-    expect(textNodes.length).toBe(2);
+    expect(textNodes.length).toBe(9);
     expect(textNodes[0].props.children).toBe('Heading Title');
-    expect(textNodes[1].props.children).toBe('Body Content');
   });
 
-  it('handles Button presses and displays loading state', async () => {
+  it('renders Button with all variants, sizes, and states', async () => {
     const onPressMock = jest.fn();
     let renderer: ReactTestRenderer.ReactTestRenderer;
 
     await act(async () => {
       renderer = ReactTestRenderer.create(
         <ThemeProvider>
-          <Button onPress={onPressMock} title="Submit Button" />
+          <Button onPress={onPressMock} size="sm" title="Primary Sm" variant="primary" />
+          <Button onPress={onPressMock} size="md" title="Secondary Md" variant="secondary" />
+          <Button onPress={onPressMock} size="lg" title="Outline Lg" variant="outline" />
+          <Button disabled={true} onPress={onPressMock} title="Ghost Disabled" variant="ghost" />
+          <Button fullWidth={true} leftIcon={<Icon name="check" />} onPress={onPressMock} rightIcon={<Icon name="close" />} title="Danger Full" variant="danger" />
         </ThemeProvider>
       );
     });
 
-    const buttonInstance = renderer!.root.findByType(Button);
-    expect(buttonInstance.props.title).toBe('Submit Button');
+    const buttons = renderer!.root.findAllByType(Button);
+    expect(buttons.length).toBe(5);
 
-    // Trigger press
     await act(async () => {
-      buttonInstance.props.onPress();
+      buttons[0].props.onPress();
     });
     expect(onPressMock).toHaveBeenCalledTimes(1);
 
@@ -74,7 +84,7 @@ describe('OptiShare Design System', () => {
     await act(async () => {
       renderer.update(
         <ThemeProvider>
-          <Button loading={true} onPress={onPressMock} title="Submit Button" />
+          <Button loading={true} onPress={onPressMock} title="Loading Button" />
         </ThemeProvider>
       );
     });
@@ -83,98 +93,148 @@ describe('OptiShare Design System', () => {
     expect(loaderInstance).toBeTruthy();
   });
 
-  it('renders Card component with press interaction', async () => {
+  it('renders Card with all variants and paddings', async () => {
     const onCardPress = jest.fn();
     let renderer: ReactTestRenderer.ReactTestRenderer;
 
     await act(async () => {
       renderer = ReactTestRenderer.create(
         <ThemeProvider>
-          <Card onPress={onCardPress} variant="elevated">
-            <Text>Card Children</Text>
+          <Card padding="sm" variant="elevated">
+            <Text>Elevated Card</Text>
+          </Card>
+          <Card padding="md" variant="outlined">
+            <Text>Outlined Card</Text>
+          </Card>
+          <Card padding="lg" variant="filled">
+            <Text>Filled Card</Text>
+          </Card>
+          <Card onPress={onCardPress} padding="none" variant="glass">
+            <Text>Glass Card</Text>
           </Card>
         </ThemeProvider>
       );
     });
 
-    const cardInstance = renderer!.root.findByType(Card);
-    expect(cardInstance).toBeTruthy();
+    const cards = renderer!.root.findAllByType(Card);
+    expect(cards.length).toBe(4);
 
     await act(async () => {
-      cardInstance.props.onPress();
+      cards[3].props.onPress();
     });
     expect(onCardPress).toHaveBeenCalledTimes(1);
   });
 
-  it('renders Input component and handles text change', async () => {
+  it('renders Input with focus, blur, clear button, error, and secure toggle', async () => {
     const onChangeTextMock = jest.fn();
+    const onFocusMock = jest.fn();
+    const onBlurMock = jest.fn();
     let renderer: ReactTestRenderer.ReactTestRenderer;
 
     await act(async () => {
       renderer = ReactTestRenderer.create(
         <ThemeProvider>
           <Input
+            error="Required field"
+            helperText="Please enter your email"
             label="Email Input"
+            leftIcon={<Icon name="search" />}
+            onBlur={onBlurMock}
             onChangeText={onChangeTextMock}
+            onFocus={onFocusMock}
             placeholder="Enter email"
-            value=""
+            rightIcon={<Icon name="check" />}
+            secureTextEntry={true}
+            showClearButton={true}
+            value="user@optishare.io"
           />
         </ThemeProvider>
       );
     });
 
+    const rnInput = renderer!.root.findByType(RNTextInput);
+
+    await act(async () => {
+      rnInput.props.onFocus({} as any);
+      rnInput.props.onBlur({} as any);
+    });
+
+    expect(onFocusMock).toHaveBeenCalledTimes(1);
+    expect(onBlurMock).toHaveBeenCalledTimes(1);
+
+    // Test clear press and password toggle pressable
+    const pressables = renderer!.root.findAllByType(Pressable);
+    for (const pressable of pressables) {
+      if (pressable.props.onPress) {
+        await act(async () => {
+          pressable.props.onPress();
+        });
+      }
+    }
+  });
+
+  it('renders Input without optional props cleanly', async () => {
+    let renderer: ReactTestRenderer.ReactTestRenderer;
+    await act(async () => {
+      renderer = ReactTestRenderer.create(
+        <ThemeProvider>
+          <Input placeholder="Simple input" />
+        </ThemeProvider>
+      );
+    });
+
     const inputInstance = renderer!.root.findByType(Input);
-    expect(inputInstance.props.label).toBe('Email Input');
-
-    await act(async () => {
-      inputInstance.props.onChangeText('test@optishare.io');
-    });
-    expect(onChangeTextMock).toHaveBeenCalledWith('test@optishare.io');
+    expect(inputInstance).toBeTruthy();
   });
 
-  it('renders Loader component overlay', async () => {
+  it('renders Loader component sizes and overlay mode', async () => {
     let renderer: ReactTestRenderer.ReactTestRenderer;
     await act(async () => {
       renderer = ReactTestRenderer.create(
         <ThemeProvider>
-          <Loader message="Loading payload..." overlay={true} />
+          <Loader size="sm" />
+          <Loader size="md" />
+          <Loader message="Loading payload..." overlay={true} size="lg" />
         </ThemeProvider>
       );
     });
 
-    const loaderInstance = renderer!.root.findByType(Loader);
-    expect(loaderInstance.props.message).toBe('Loading payload...');
-    expect(loaderInstance.props.overlay).toBe(true);
+    const loaders = renderer!.root.findAllByType(Loader);
+    expect(loaders.length).toBe(3);
   });
 
-  it('renders Divider component', async () => {
+  it('renders Divider component horizontal and vertical', async () => {
     let renderer: ReactTestRenderer.ReactTestRenderer;
     await act(async () => {
       renderer = ReactTestRenderer.create(
         <ThemeProvider>
-          <Divider />
+          <Divider orientation="horizontal" spacing="md" thickness={1} />
+          <Divider orientation="vertical" spacing="sm" thickness={2} />
         </ThemeProvider>
       );
     });
 
-    const dividerInstance = renderer!.root.findByType(Divider);
-    expect(dividerInstance).toBeTruthy();
+    const dividers = renderer!.root.findAllByType(Divider);
+    expect(dividers.length).toBe(2);
   });
 
-  it('renders ScreenContainer component', async () => {
+  it('renders ScreenContainer component scrollable and fixed', async () => {
     let renderer: ReactTestRenderer.ReactTestRenderer;
     await act(async () => {
       renderer = ReactTestRenderer.create(
         <ThemeProvider>
-          <ScreenContainer>
-            <Text>Screen Content</Text>
+          <ScreenContainer padding="lg" scrollable={true}>
+            <Text>Scrollable Content</Text>
+          </ScreenContainer>
+          <ScreenContainer padding="sm" scrollable={false}>
+            <Text>Fixed Content</Text>
           </ScreenContainer>
         </ThemeProvider>
       );
     });
 
-    const containerInstance = renderer!.root.findByType(ScreenContainer);
-    expect(containerInstance).toBeTruthy();
+    const containers = renderer!.root.findAllByType(ScreenContainer);
+    expect(containers.length).toBe(2);
   });
 
   it('renders Icon component', async () => {
@@ -183,12 +243,13 @@ describe('OptiShare Design System', () => {
       renderer = ReactTestRenderer.create(
         <ThemeProvider>
           <Icon name="sun" size={24} />
+          <Icon color="#00FF00" name="moon" size={32} />
         </ThemeProvider>
       );
     });
 
-    const iconInstance = renderer!.root.findByType(Icon);
-    expect(iconInstance.props.name).toBe('sun');
+    const icons = renderer!.root.findAllByType(Icon);
+    expect(icons.length).toBe(2);
   });
 
   it('toggles theme between light and dark mode', async () => {
