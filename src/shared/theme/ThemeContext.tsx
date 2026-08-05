@@ -1,15 +1,16 @@
 /**
  * OptiShare Design System - Theme Context & Provider
  *
- * Provides theme state, light/dark mode toggling, and hook access.
+ * Provides theme state, light/dark mode toggling, and persistent Zustand theme store access.
  */
 
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { useColorScheme as useRNColorScheme } from 'react-native';
 
 import type { Theme, ThemeMode } from './theme';
 import { darkTheme, lightTheme } from './theme';
+import { useThemeStore } from '../../store/theme/themeStore';
 
 export interface ThemeContextValue {
   theme: Theme;
@@ -26,12 +27,11 @@ export interface ThemeProviderProps {
   initialMode?: ThemeMode;
 }
 
-export function ThemeProvider({
-  children,
-  initialMode = 'system',
-}: ThemeProviderProps): React.JSX.Element {
+export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Element {
   const systemColorScheme = useRNColorScheme();
-  const [themeMode, setThemeMode] = useState<ThemeMode>(initialMode);
+  const themeMode = useThemeStore((state) => state.mode);
+  const storeSetThemeMode = useThemeStore((state) => state.setThemeMode);
+  const storeToggleTheme = useThemeStore((state) => state.toggleThemeMode);
 
   const isDarkMode = useMemo(() => {
     if (themeMode === 'system') {
@@ -44,9 +44,16 @@ export function ThemeProvider({
     return isDarkMode ? darkTheme : lightTheme;
   }, [isDarkMode]);
 
+  const setThemeMode = useCallback(
+    (mode: ThemeMode) => {
+      storeSetThemeMode(mode);
+    },
+    [storeSetThemeMode],
+  );
+
   const toggleTheme = useCallback(() => {
-    setThemeMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  }, []);
+    storeToggleTheme();
+  }, [storeToggleTheme]);
 
   const value = useMemo(
     () => ({
@@ -56,7 +63,7 @@ export function ThemeProvider({
       setThemeMode,
       toggleTheme,
     }),
-    [theme, themeMode, isDarkMode, toggleTheme],
+    [theme, themeMode, isDarkMode, setThemeMode, toggleTheme],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
@@ -65,7 +72,6 @@ export function ThemeProvider({
 export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);
   if (!context) {
-    // Return fallback lightTheme if used outside provider
     return {
       theme: lightTheme,
       themeMode: 'light',
