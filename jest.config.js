@@ -36,6 +36,6 @@ module.exports = {
   },
   forceExit: true,
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-config|react-native-safe-area-context|react-native-permissions|react-native-fs|react-native-document-picker|react-native-mmkv|zustand)/)',
+    'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-config|react-native-safe-area-context|react-native-permissions|react-native-fs|react-native-document-picker|react-native-mmkv|react-native-vision-camera|zustand)/)',
   ],
 };

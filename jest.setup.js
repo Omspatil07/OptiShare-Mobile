@@ -81,6 +81,63 @@ jest.mock('react-native-document-picker', () => ({
   isCancel: jest.fn((err) => err?.message === 'User canceled'),
 }));
 
+// Mock react-native-vision-camera
+jest.mock('react-native-vision-camera', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  const mockDevice = {
+    id: 'mock-back-camera',
+    name: 'Mock Back Camera',
+    position: 'back',
+    hasFlash: true,
+    hasTorch: true,
+    minZoom: 1.0,
+    maxZoom: 10.0,
+    neutralZoom: 1.0,
+    supportsRawCapture: false,
+    formats: [],
+    sensorOrientation: 'landscape-left',
+    physicalDevices: ['wide-angle-camera'],
+    hardwareLevel: 'full',
+    isMultiCam: false,
+    minFocusDistance: 0,
+    supportsFocus: true,
+    supportsLowLightBoost: false,
+    supportsBokeh: false,
+  };
+
+  const Camera = React.forwardRef(function MockCamera(props, ref) {
+    React.useImperativeHandle(ref, () => ({
+      focus: jest.fn(() => Promise.resolve()),
+      focusTo: jest.fn(() => Promise.resolve()),
+      takePhoto: jest.fn(() => Promise.resolve({ path: '/mock/photo.jpg' })),
+      startRecording: jest.fn(),
+      stopRecording: jest.fn(() => Promise.resolve()),
+    }));
+    if (props.onStarted) {
+      React.useEffect(() => { props.onStarted(); }, []);
+    }
+    return React.createElement(View, { testID: 'mock-camera', style: props.style });
+  });
+  Camera.displayName = 'MockCamera';
+
+  return {
+    Camera,
+    useCameraDevice: jest.fn((_position) => mockDevice),
+    useCameraDevices: jest.fn(() => [mockDevice]),
+    useCameraFormat: jest.fn(() => null),
+    useCameraPermission: jest.fn(() => ({
+      hasPermission: true,
+      requestPermission: jest.fn(() => Promise.resolve('granted')),
+    })),
+    useFrameProcessor: jest.fn((_fn, _deps) => undefined),
+    getCameraDevice: jest.fn((_devices, _position) => mockDevice),
+    sortFormats: jest.fn((formats) => formats),
+    frameRateIncluded: jest.fn(() => true),
+  };
+});
+
 // Mock react-native-permissions
 jest.mock('react-native-permissions', () => ({
   check: jest.fn(() => Promise.resolve('granted')),
