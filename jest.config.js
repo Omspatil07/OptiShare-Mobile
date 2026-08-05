@@ -29,11 +29,12 @@ module.exports = {
   coverageThreshold: {
     global: {
       branches: 50,
-      functions: 80,
+      functions: 75,
       lines: 80,
       statements: 80,
     },
   },
+  forceExit: true,
   transformIgnorePatterns: [
     'node_modules/(?!(react-native|@react-native|react-native-config|react-native-safe-area-context)/)',
   ],

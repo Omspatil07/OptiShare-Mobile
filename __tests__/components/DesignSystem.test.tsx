@@ -6,8 +6,11 @@
  */
 
 import React from 'react';
-import ReactTestRenderer, { act } from 'react-test-renderer';
+
 import { Pressable, TextInput as RNTextInput } from 'react-native';
+
+import ReactTestRenderer, { act } from 'react-test-renderer';
+
 import {
   Button,
   Card,

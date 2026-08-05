@@ -1,5 +1,7 @@
 import React from 'react';
+
 import ReactTestRenderer, { act } from 'react-test-renderer';
+
 import { App } from '../src/app/App';
 
 // Mock react-native-safe-area-context

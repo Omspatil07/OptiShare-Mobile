@@ -12,7 +12,7 @@ module.exports = {
   semi: true,
   bracketSpacing: true,
   arrowParens: 'always',
-  endOfLine: 'lf',
+  endOfLine: 'auto',
   jsxSingleQuote: false,
   bracketSameLine: false,
 };
