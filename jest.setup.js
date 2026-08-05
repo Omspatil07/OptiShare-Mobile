@@ -30,6 +30,8 @@ jest.mock('react-native-fs', () => ({
   DownloadDirectoryPath: '/mock/downloads',
   readFile: jest.fn(() => Promise.resolve('mock_content')),
   writeFile: jest.fn(() => Promise.resolve(true)),
+  appendFile: jest.fn(() => Promise.resolve(true)),
+  readDir: jest.fn(() => Promise.resolve([])),
   unlink: jest.fn(() => Promise.resolve(true)),
   exists: jest.fn(() => Promise.resolve(true)),
   mkdir: jest.fn(() => Promise.resolve(true)),

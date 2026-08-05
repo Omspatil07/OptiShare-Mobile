@@ -4,6 +4,12 @@
  * Verifies PermissionService, PermissionManager, permissionUtils, and usePermissions hook.
  */
 
+import React from 'react';
+
+import { Platform } from 'react-native';
+
+import ReactTestRenderer, { act } from 'react-test-renderer';
+
 import {
   PermissionManager,
   PermissionService,
@@ -12,8 +18,21 @@ import {
   isPermissionDenied,
   isPermissionGranted,
   navigateToAppSettings,
+  usePermissions,
 } from '../../src/permissions';
 import { usePermissionStore } from '../../src/store';
+
+function TestHookConsumer({
+  onMount,
+}: {
+  onMount: (hookData: ReturnType<typeof usePermissions>) => void;
+}): React.JSX.Element | null {
+  const hookData = usePermissions();
+  React.useEffect(() => {
+    onMount(hookData);
+  }, [hookData, onMount]);
+  return null;
+}
 
 describe('OptiShare Permission Management System', () => {
   beforeEach(() => {
@@ -32,12 +51,21 @@ describe('OptiShare Permission Management System', () => {
       expect(isPermissionDenied('denied')).toBe(true);
     });
 
-    it('retrieves platform permission keys for camera and storage', () => {
-      const cameraKey = getPlatformPermissionKey('camera');
-      expect(cameraKey).toBeTruthy();
+    it('retrieves platform permission keys for Android and iOS', () => {
+      const origOS = Platform.OS;
 
-      const storageKey = getPlatformPermissionKey('storage');
-      expect(storageKey).toBeTruthy();
+      Platform.OS = 'android';
+      expect(getPlatformPermissionKey('camera')).toBeTruthy();
+      expect(getPlatformPermissionKey('storage')).toBeTruthy();
+      expect(getPlatformPermissionKey('photos')).toBeTruthy();
+      expect(getPlatformPermissionKey('notifications')).toBeTruthy();
+
+      Platform.OS = 'ios';
+      expect(getPlatformPermissionKey('camera')).toBeTruthy();
+      expect(getPlatformPermissionKey('photos')).toBeTruthy();
+      expect(getPlatformPermissionKey('storage')).toBeTruthy();
+
+      Platform.OS = origOS;
     });
 
     it('navigates to system settings safely', async () => {
@@ -63,13 +91,19 @@ describe('OptiShare Permission Management System', () => {
       const status = await PermissionManager.checkCameraPermission();
       expect(status).toBe('granted');
       expect(usePermissionStore.getState().cameraPermission).toBe('granted');
+
+      const req = await PermissionManager.requestCameraPermission();
+      expect(req).toBe('granted');
     });
 
-    it('requests storage permission and syncs status with permissionStore', async () => {
+    it('checks and requests storage permission and syncs status with permissionStore', async () => {
       expect(usePermissionStore.getState().storagePermission).toBe('undetermined');
 
-      const status = await PermissionManager.requestStoragePermission();
-      expect(status).toBe('granted');
+      const checkStatus = await PermissionManager.checkStoragePermission();
+      expect(checkStatus).toBe('granted');
+
+      const reqStatus = await PermissionManager.requestStoragePermission();
+      expect(reqStatus).toBe('granted');
       expect(usePermissionStore.getState().storagePermission).toBe('granted');
     });
 
@@ -77,6 +111,32 @@ describe('OptiShare Permission Management System', () => {
       const all = await PermissionManager.checkAllPermissions();
       expect(all.camera).toBe('granted');
       expect(all.storage).toBe('granted');
+    });
+  });
+
+  describe('4. usePermissions React Hook', () => {
+    it('executes hook callbacks cleanly', async () => {
+      let hookResult: ReturnType<typeof usePermissions> | null = null;
+
+      await act(async () => {
+        ReactTestRenderer.create(
+          <TestHookConsumer
+            onMount={(data) => {
+              hookResult = data;
+            }}
+          />
+        );
+      });
+
+      expect(hookResult).not.toBeNull();
+      await act(async () => {
+        await hookResult?.checkPermissions();
+        await hookResult?.requestCamera();
+        await hookResult?.requestStorage();
+      });
+
+      expect(hookResult?.cameraStatus).toBe('granted');
+      expect(hookResult?.storageStatus).toBe('granted');
     });
   });
 });
