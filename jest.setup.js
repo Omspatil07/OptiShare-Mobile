@@ -78,3 +78,34 @@ jest.mock('react-native-document-picker', () => ({
   },
   isCancel: jest.fn((err) => err?.message === 'User canceled'),
 }));
+
+// Mock react-native-permissions
+jest.mock('react-native-permissions', () => ({
+  check: jest.fn(() => Promise.resolve('granted')),
+  request: jest.fn(() => Promise.resolve('granted')),
+  checkMultiple: jest.fn(() => Promise.resolve({ 'android.permission.CAMERA': 'granted' })),
+  requestMultiple: jest.fn(() => Promise.resolve({ 'android.permission.CAMERA': 'granted' })),
+  openSettings: jest.fn(() => Promise.resolve(true)),
+  RESULTS: {
+    UNAVAILABLE: 'unavailable',
+    DENIED: 'denied',
+    BLOCKED: 'blocked',
+    GRANTED: 'granted',
+    LIMITED: 'limited',
+  },
+  PERMISSIONS: {
+    ANDROID: {
+      CAMERA: 'android.permission.CAMERA',
+      READ_EXTERNAL_STORAGE: 'android.permission.READ_EXTERNAL_STORAGE',
+      WRITE_EXTERNAL_STORAGE: 'android.permission.WRITE_EXTERNAL_STORAGE',
+      READ_MEDIA_IMAGES: 'android.permission.READ_MEDIA_IMAGES',
+      READ_MEDIA_VIDEO: 'android.permission.READ_MEDIA_VIDEO',
+      POST_NOTIFICATIONS: 'android.permission.POST_NOTIFICATIONS',
+    },
+    IOS: {
+      CAMERA: 'ios.permission.CAMERA',
+      PHOTO_LIBRARY: 'ios.permission.PHOTO_LIBRARY',
+      PHOTO_LIBRARY_ADD_ONLY: 'ios.permission.PHOTO_LIBRARY_ADD_ONLY',
+    },
+  },
+}));
