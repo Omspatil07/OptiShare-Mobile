@@ -85,6 +85,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Make gradlew executable
+        working-directory: android
+        run: chmod +x gradlew
+
       - name: Build Android (debug)
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
