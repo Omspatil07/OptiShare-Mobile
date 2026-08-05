@@ -36,6 +36,6 @@ module.exports = {
   },
   forceExit: true,
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|react-native-config|react-native-safe-area-context)/)',
+    'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-config|react-native-safe-area-context)/)',
   ],
 };
