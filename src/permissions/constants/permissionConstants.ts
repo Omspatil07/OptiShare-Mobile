@@ -8,9 +8,13 @@ import { PERMISSIONS } from 'react-native-permissions';
 
 import type { AppPermissionType } from '../types/permissionTypes';
 
+// Provide a typed index-accessible reference for Android permissions
+// that only exist in newer API levels (READ_MEDIA_IMAGES, POST_NOTIFICATIONS).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ANDROID_EXT_PERMS = PERMISSIONS.ANDROID as any;
+
 export function getPlatformPermissionKey(type: AppPermissionType): string | null {
   if (Platform.OS === 'android') {
-    const androidPermissions = PERMISSIONS.ANDROID as Record<string, string>;
     switch (type) {
       case 'camera':
         return PERMISSIONS.ANDROID.CAMERA || 'android.permission.CAMERA';
@@ -18,14 +22,18 @@ export function getPlatformPermissionKey(type: AppPermissionType): string | null
         return (
           PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE || 'android.permission.READ_EXTERNAL_STORAGE'
         );
+
       case 'photos':
         return (
-          androidPermissions.READ_MEDIA_IMAGES ||
+          (ANDROID_EXT_PERMS.READ_MEDIA_IMAGES as string | undefined) ||
           PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE ||
           'android.permission.READ_MEDIA_IMAGES'
         );
       case 'notifications':
-        return androidPermissions.POST_NOTIFICATIONS || 'android.permission.POST_NOTIFICATIONS';
+        return (
+          (ANDROID_EXT_PERMS.POST_NOTIFICATIONS as string | undefined) ||
+          'android.permission.POST_NOTIFICATIONS'
+        );
       default:
         return null;
     }
