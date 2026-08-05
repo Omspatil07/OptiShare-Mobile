@@ -1,0 +1,15 @@
+# Default reviewers for all files
+* @Omspatil07
+
+# Source code
+/src/ @Omspatil07
+
+# Documentation
+/docs/ @Omspatil07
+
+# CI/CD
+/.github/ @Omspatil07
+
+# Native code
+/android/ @Omspatil07
+/ios/ @Omspatil07

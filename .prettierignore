@@ -1,0 +1,13 @@
+# Build artifacts
+node_modules/
+android/
+ios/
+.bundle/
+
+# Generated files
+package-lock.json
+*.lock
+coverage/
+
+# Metro
+.metro-health-check*

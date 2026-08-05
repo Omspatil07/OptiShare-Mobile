@@ -1,0 +1,15 @@
+# Build artifacts
+node_modules/
+android/
+ios/
+.bundle/
+coverage/
+
+# Config files
+babel.config.js
+metro.config.js
+jest.config.js
+jest.setup.js
+commitlint.config.js
+.eslintrc.js
+.prettierrc.js
