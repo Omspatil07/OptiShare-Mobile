@@ -20,3 +20,61 @@ jest.mock('react-native-config', () => ({
 jest.mock('react-native-safe-area-context', () =>
   require('react-native-safe-area-context/jest/mock').default
 );
+
+// Mock react-native-fs
+jest.mock('react-native-fs', () => ({
+  DocumentDirectoryPath: '/mock/documents',
+  CachesDirectoryPath: '/mock/cache',
+  TemporaryDirectoryPath: '/mock/tmp',
+  ExternalDirectoryPath: '/mock/external',
+  DownloadDirectoryPath: '/mock/downloads',
+  readFile: jest.fn(() => Promise.resolve('mock_content')),
+  writeFile: jest.fn(() => Promise.resolve(true)),
+  unlink: jest.fn(() => Promise.resolve(true)),
+  exists: jest.fn(() => Promise.resolve(true)),
+  mkdir: jest.fn(() => Promise.resolve(true)),
+  moveFile: jest.fn(() => Promise.resolve(true)),
+  copyFile: jest.fn(() => Promise.resolve(true)),
+  stat: jest.fn(() =>
+    Promise.resolve({
+      name: 'sample.pdf',
+      path: '/mock/documents/sample.pdf',
+      size: 1024000,
+      isFile: () => true,
+      isDirectory: () => false,
+      mtime: new Date('2026-08-05T00:00:00Z'),
+      ctime: new Date('2026-08-05T00:00:00Z'),
+    })
+  ),
+  getFSInfo: jest.fn(() => Promise.resolve({ totalSpace: 64000000000, freeSpace: 32000000000 })),
+}));
+
+// Mock react-native-document-picker
+jest.mock('react-native-document-picker', () => ({
+  pick: jest.fn(() =>
+    Promise.resolve([
+      {
+        uri: 'file:///mock/documents/sample.pdf',
+        name: 'sample.pdf',
+        size: 1024000,
+        type: 'application/pdf',
+      },
+    ])
+  ),
+  pickSingle: jest.fn(() =>
+    Promise.resolve({
+      uri: 'file:///mock/documents/sample.pdf',
+      name: 'sample.pdf',
+      size: 1024000,
+      type: 'application/pdf',
+    })
+  ),
+  types: {
+    allFiles: '*/*',
+    images: 'image/*',
+    pdf: 'application/pdf',
+    audio: 'audio/*',
+    video: 'video/*',
+  },
+  isCancel: jest.fn((err) => err?.message === 'User canceled'),
+}));

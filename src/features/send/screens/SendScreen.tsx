@@ -1,16 +1,38 @@
 /**
- * OptiShare - Send Screen Placeholder
+ * OptiShare - Send Screen Placeholder with File System Integration
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { StyleSheet, View } from 'react-native';
 
 import { ROUTES } from '../../../app/navigation/routes';
 import type { TabScreenProps } from '../../../app/navigation/types';
+import { useFileSystem } from '../../../filesystem';
 import { Button, Card, Icon, ScreenContainer, Text } from '../../../shared';
+import { useFileStore } from '../../../store';
 
 export function SendScreen({ navigation }: TabScreenProps<'SendTab'>): React.JSX.Element {
+  const { pickSingleFile, isLoading } = useFileSystem();
+  const addFile = useFileStore((state) => state.addFile);
+
+  const handlePickFile = useCallback(async () => {
+    const pickedFile = await pickSingleFile();
+    if (pickedFile) {
+      addFile({
+        id: `picked_${Date.now()}`,
+        name: pickedFile.name,
+        sizeBytes: pickedFile.sizeBytes,
+        mimeType: pickedFile.mimeType,
+        path: pickedFile.uri,
+      });
+      navigation.navigate(ROUTES.FILE_PREVIEW, {
+        fileName: pickedFile.name,
+        fileSize: pickedFile.sizeBytes,
+      });
+    }
+  }, [pickSingleFile, addFile, navigation]);
+
   return (
     <ScreenContainer scrollable={true}>
       <View style={styles.header}>
@@ -33,13 +55,8 @@ export function SendScreen({ navigation }: TabScreenProps<'SendTab'>): React.JSX
         <Button
           fullWidth={true}
           leftIcon={<Icon color="#FFFFFF" name="check" size={18} />}
-          onPress={() =>
-            navigation.navigate(ROUTES.FILE_PREVIEW, {
-              fileName: 'sample_document.pdf',
-              fileSize: 2450000,
-            })
-          }
-          title="Preview Selected File"
+          onPress={handlePickFile}
+          title={isLoading ? 'Opening File Picker...' : 'Pick & Preview File'}
           variant="primary"
         />
       </Card>
