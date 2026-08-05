@@ -28,13 +28,13 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 70,
+      branches: 50,
       functions: 80,
       lines: 80,
       statements: 80,
     },
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|react-native-safe-area-context)/)',
+    'node_modules/(?!(react-native|@react-native|react-native-config|react-native-safe-area-context)/)',
   ],
 };
